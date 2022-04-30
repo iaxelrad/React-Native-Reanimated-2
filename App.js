@@ -4,6 +4,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withRepeat,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -17,13 +18,16 @@ const App = () => {
     return {
       opacity: progress.value,
       borderRadius: (progress.value * SIZE) / 2,
-      transform: [{scale: scale.value}],
+      transform: [
+        {scale: scale.value},
+        {rotate: `${progress.value * 2 * Math.PI}rad`},
+      ],
     };
   }, []);
 
   useEffect(() => {
-    progress.value = withSpring(0.5);
-    scale.value = withSpring(1);
+    progress.value = withRepeat(withSpring(0.5), 3, true); // For infinite loop set 2nd parameter of withRepeat to -1
+    scale.value = withRepeat(withSpring(1), 3, true);
   }, []);
 
   return (
