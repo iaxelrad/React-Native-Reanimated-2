@@ -13,21 +13,36 @@ import {
 
 const SIZE = 100;
 
+type ContextType = {
+  translateX: number;
+  translateY: number;
+};
+
 const App = () => {
   const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
 
-  const panGestureEvent =
-    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-      onStart: event => {},
-      onActive: event => {
-        translateX.value = event.translationX;
-      },
-      onEnd: event => {},
-    });
+  const panGestureEvent = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    ContextType
+  >({
+    onStart: (event, ctx) => {
+      ctx.translateX = translateX.value;
+      ctx.translateY = translateY.value;
+    },
+    onActive: (event, ctx) => {
+      translateX.value = event.translationX + ctx.translateX;
+      translateY.value = event.translationY + ctx.translateY;
+    },
+    onEnd: event => {},
+  });
 
   const rStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: translateX.value}],
+      transform: [
+        {translateX: translateX.value},
+        {translateY: translateY.value},
+      ],
     };
   });
 
