@@ -1,55 +1,24 @@
 import React, {useEffect} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
+import Page from './components/Page';
 
-const SIZE = 100;
-
-const handleRotation = (progress: Animated.SharedValue<number>) => {
-  'worklet';
-  return `${progress.value * 2 * Math.PI}rad`;
-};
+const WORDS = ["what's", 'up', 'mobile', 'devs?'];
 
 const App = () => {
-  const progress = useSharedValue(1);
-  const scale = useSharedValue(2);
-
-  const reanimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: progress.value,
-      borderRadius: (progress.value * SIZE) / 2,
-      transform: [{scale: scale.value}, {rotate: handleRotation(progress)}],
-    };
-  }, []);
-
-  useEffect(() => {
-    progress.value = withRepeat(withSpring(0.5), 3, true); // For infinite loop set 2nd parameter of withRepeat to -1
-    scale.value = withRepeat(withSpring(1), 3, true);
-  }, []);
-
   return (
-    <View style={styles.backgroundStyle}>
-      <Animated.View
-        style={[
-          {height: SIZE, width: SIZE, backgroundColor: 'blue'},
-          reanimatedStyle,
-        ]}
-      />
-    </View>
+    <Animated.ScrollView horizontal style={styles.container}>
+      {WORDS.map((title, i) => {
+        return <Page key={i.toString()} index={i} title={title} />;
+      })}
+    </Animated.ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundStyle: {
+  container: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
