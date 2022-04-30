@@ -43,13 +43,41 @@ const Page = ({index, title, translateX}: PageProps) => {
     };
   });
 
+  const rTextStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      translateX.value,
+      inputRange,
+      [height / 2, 0, -height / 2],
+      Extrapolate.CLAMP,
+    );
+    const opacity = interpolate(
+      translateX.value,
+      inputRange,
+      [-2, 1, -2],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      opacity,
+      transform: [
+        {
+          translateY,
+        },
+      ],
+    };
+  });
+
   return (
     <View
       style={[
         styles.pageContainer,
         {backgroundColor: `rgba(0,0,256,0.${index + 2})`},
       ]}>
-      <Animated.View style={[styles.square, rStyle]}></Animated.View>
+      <Animated.View style={[styles.square, rStyle]} />
+
+      <Animated.View style={[styles.textContainer, rTextStyle]}>
+        <Text style={styles.text}>{title}</Text>
+      </Animated.View>
     </View>
   );
 };
@@ -66,7 +94,15 @@ const styles = StyleSheet.create({
   square: {
     height: SIZE,
     width: SIZE,
-
     backgroundColor: 'rgba(0,0,256,0.4)',
+  },
+  textContainer: {
+    position: 'absolute',
+  },
+  text: {
+    fontSize: 70,
+    color: 'white',
+    textTransform: 'uppercase',
+    fontWeight: '700',
   },
 });
