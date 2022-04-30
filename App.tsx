@@ -10,6 +10,11 @@ import Animated, {
 
 const SIZE = 100;
 
+const handleRotation = (progress: Animated.SharedValue<number>) => {
+  'worklet';
+  return `${progress.value * 2 * Math.PI}rad`;
+};
+
 const App = () => {
   const progress = useSharedValue(1);
   const scale = useSharedValue(2);
@@ -18,10 +23,7 @@ const App = () => {
     return {
       opacity: progress.value,
       borderRadius: (progress.value * SIZE) / 2,
-      transform: [
-        {scale: scale.value},
-        {rotate: `${progress.value * 2 * Math.PI}rad`},
-      ],
+      transform: [{scale: scale.value}, {rotate: handleRotation(progress)}],
     };
   }, []);
 
