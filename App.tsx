@@ -1,44 +1,38 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import React, {useState} from 'react';
+import {StyleSheet, Switch, View} from 'react-native';
 
-const SIZE = 100;
-
-const handleRotation = (progress: Animated.SharedValue<number>) => {
-  'worklet';
-  return `${progress.value * 2 * Math.PI}rad`;
+const Colors = {
+  dark: {
+    background: '#1e1e1e',
+    circle: '#252525',
+    text: '#f8f8f8',
+  },
+  light: {
+    background: '#f8f8f8',
+    circle: '#fff',
+    text: '#1e1e1e',
+  },
 };
 
+const SWITCH_TRACK_COLOR = {
+  true: 'rgba(256,0,256,0.2)',
+  false: 'rgba(0,0,0,0.1)',
+};
+
+type Theme = 'light' | 'dark';
+
 const App = () => {
-  const progress = useSharedValue(1);
-  const scale = useSharedValue(2);
-
-  const reanimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: progress.value,
-      borderRadius: (progress.value * SIZE) / 2,
-      transform: [{scale: scale.value}, {rotate: handleRotation(progress)}],
-    };
-  }, []);
-
-  useEffect(() => {
-    progress.value = withRepeat(withSpring(0.5), 3, true); // For infinite loop set 2nd parameter of withRepeat to -1
-    scale.value = withRepeat(withSpring(1), 3, true);
-  }, []);
+  const [theme, setTheme] = useState<Theme>('light');
 
   return (
     <View style={styles.backgroundStyle}>
-      <Animated.View
-        style={[
-          {height: SIZE, width: SIZE, backgroundColor: 'blue'},
-          reanimatedStyle,
-        ]}
+      <Switch
+        value={theme === 'dark'}
+        onValueChange={toggled => {
+          setTheme(toggled ? 'dark' : 'light');
+        }}
+        trackColor={SWITCH_TRACK_COLOR}
+        thumbColor={'violet'}
       />
     </View>
   );
