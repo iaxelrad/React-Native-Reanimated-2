@@ -1,45 +1,41 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
 import Animated, {
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
-  withRepeat,
-  withTiming,
 } from 'react-native-reanimated';
+
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
 
 const SIZE = 100;
 
-const handleRotation = (progress: Animated.SharedValue<number>) => {
-  'worklet';
-  return `${progress.value * 2 * Math.PI}rad`;
-};
-
 const App = () => {
-  const progress = useSharedValue(1);
-  const scale = useSharedValue(2);
+  const translateX = useSharedValue(0);
 
-  const reanimatedStyle = useAnimatedStyle(() => {
+  const panGestureEvent =
+    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
+      onStart: event => {},
+      onActive: event => {
+        translateX.value = event.translationX;
+      },
+      onEnd: event => {},
+    });
+
+  const rStyle = useAnimatedStyle(() => {
     return {
-      opacity: progress.value,
-      borderRadius: (progress.value * SIZE) / 2,
-      transform: [{scale: scale.value}, {rotate: handleRotation(progress)}],
+      transform: [{translateX: translateX.value}],
     };
-  }, []);
-
-  useEffect(() => {
-    progress.value = withRepeat(withSpring(0.5), 3, true); // For infinite loop set 2nd parameter of withRepeat to -1
-    scale.value = withRepeat(withSpring(1), 3, true);
-  }, []);
+  });
 
   return (
     <View style={styles.backgroundStyle}>
-      <Animated.View
-        style={[
-          {height: SIZE, width: SIZE, backgroundColor: 'blue'},
-          reanimatedStyle,
-        ]}
-      />
+      <PanGestureHandler onGestureEvent={panGestureEvent}>
+        <Animated.View style={[styles.square, rStyle]} />
+      </PanGestureHandler>
     </View>
   );
 };
@@ -50,6 +46,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  square: {
+    height: SIZE,
+    width: SIZE,
+    backgroundColor: 'rgba(0,0,256,0.5)',
+    borderRadius: 20,
   },
 });
 
