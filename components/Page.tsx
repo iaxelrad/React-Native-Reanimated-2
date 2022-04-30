@@ -1,6 +1,10 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 
 interface PageProps {
   title: string;
@@ -13,13 +17,39 @@ const {width, height} = Dimensions.get('window');
 const SIZE = width * 0.7;
 
 const Page = ({index, title, translateX}: PageProps) => {
+  const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+  const rStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      translateX.value,
+      inputRange,
+      [0, 1, 0],
+      Extrapolate.CLAMP,
+    );
+
+    const borderRadius = interpolate(
+      translateX.value,
+      inputRange,
+      [0, SIZE / 2, 0],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      borderRadius,
+      transform: [
+        {
+          scale,
+        },
+      ],
+    };
+  });
+
   return (
     <View
       style={[
         styles.pageContainer,
         {backgroundColor: `rgba(0,0,256,0.${index + 2})`},
       ]}>
-      <Animated.View style={styles.square}></Animated.View>
+      <Animated.View style={[styles.square, rStyle]}></Animated.View>
     </View>
   );
 };
