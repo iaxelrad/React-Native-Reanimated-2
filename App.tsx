@@ -15,6 +15,7 @@ const App = () => {
   });
   return (
     <Animated.ScrollView
+      pagingEnabled
       onScroll={scrollHandler}
       scrollEventThrottle={16}
       horizontal
