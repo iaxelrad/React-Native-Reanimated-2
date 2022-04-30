@@ -1,15 +1,33 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
-import Animated from 'react-native-reanimated';
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 import Page from './components/Page';
 
 const WORDS = ["what's", 'up', 'mobile', 'devs?'];
 
 const App = () => {
+  const translateX = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    translateX.value = event.contentOffset.x;
+  });
   return (
-    <Animated.ScrollView horizontal style={styles.container}>
+    <Animated.ScrollView
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
+      horizontal
+      style={styles.container}>
       {WORDS.map((title, i) => {
-        return <Page key={i.toString()} index={i} title={title} />;
+        return (
+          <Page
+            key={i.toString()}
+            index={i}
+            title={title}
+            translateX={translateX}
+          />
+        );
       })}
     </Animated.ScrollView>
   );

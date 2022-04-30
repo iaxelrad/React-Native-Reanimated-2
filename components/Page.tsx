@@ -5,13 +5,14 @@ import Animated from 'react-native-reanimated';
 interface PageProps {
   title: string;
   index: number;
+  translateX: Animated.SharedValue<number>;
 }
 
 const {width, height} = Dimensions.get('window');
 
 const SIZE = width * 0.7;
 
-const Page = ({index, title}: PageProps) => {
+const Page = ({index, title, translateX}: PageProps) => {
   return (
     <View
       style={[
