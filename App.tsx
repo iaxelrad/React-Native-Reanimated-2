@@ -1,56 +1,51 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import React from 'react';
+import {Image, StyleSheet} from 'react-native';
+import {
+  PinchGestureHandler,
+  PinchGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
 import Animated, {
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withRepeat,
-  withTiming,
 } from 'react-native-reanimated';
 
-const SIZE = 100;
+const imageUri =
+  'https://images.unsplash.com/photo-1621569642780-4864752e847e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80';
 
-const handleRotation = (progress: Animated.SharedValue<number>) => {
-  'worklet';
-  return `${progress.value * 2 * Math.PI}rad`;
-};
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const App = () => {
-  const progress = useSharedValue(1);
-  const scale = useSharedValue(2);
+  const scale = useSharedValue(1);
 
-  const reanimatedStyle = useAnimatedStyle(() => {
+  const pinchHandler =
+    useAnimatedGestureHandler<PinchGestureHandlerGestureEvent>({
+      onActive: event => {
+        scale.value = event.scale;
+      },
+    });
+
+  const rStyle = useAnimatedStyle(() => {
     return {
-      opacity: progress.value,
-      borderRadius: (progress.value * SIZE) / 2,
-      transform: [{scale: scale.value}, {rotate: handleRotation(progress)}],
+      transform: [{scale: scale.value}],
     };
-  }, []);
-
-  useEffect(() => {
-    progress.value = withRepeat(withSpring(0.5), 3, true); // For infinite loop set 2nd parameter of withRepeat to -1
-    scale.value = withRepeat(withSpring(1), 3, true);
-  }, []);
-
+  });
   return (
-    <View style={styles.backgroundStyle}>
-      <Animated.View
-        style={[
-          {height: SIZE, width: SIZE, backgroundColor: 'blue'},
-          reanimatedStyle,
-        ]}
-      />
-    </View>
+    <PinchGestureHandler onGestureEvent={pinchHandler}>
+      <AnimatedImage style={[styles.image, rStyle]} source={{uri: imageUri}} />
+    </PinchGestureHandler>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundStyle: {
+  container: {
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  image: {flex: 1},
 });
 
 export default App;
