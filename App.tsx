@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Dimensions, Image, StyleSheet} from 'react-native';
 import {
   PinchGestureHandler,
   PinchGestureHandlerGestureEvent,
@@ -15,6 +15,7 @@ const imageUri =
   'https://images.unsplash.com/photo-1621569642780-4864752e847e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
+const {width, height} = Dimensions.get('window');
 
 const App = () => {
   const scale = useSharedValue(1);
@@ -35,7 +36,17 @@ const App = () => {
 
   const rStyle = useAnimatedStyle(() => {
     return {
-      transform: [{scale: scale.value}],
+      transform: [
+        {translateX: focalX.value},
+        {translateY: focalY.value},
+        {translateX: -width / 2},
+        {translateY: -height / 2},
+        {scale: scale.value},
+        {translateX: -focalX.value},
+        {translateY: -focalY.value},
+        {translateX: width / 2},
+        {translateY: height / 2},
+      ],
     };
   });
 
