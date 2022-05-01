@@ -56,8 +56,20 @@ const App = () => {
     };
   });
 
+  const rTextStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      progress.value,
+      [0, 1],
+      [Colors.light.text, Colors.dark.text],
+    );
+    return {
+      color,
+    };
+  });
+
   return (
     <Animated.View style={[styles.backgroundStyle, rStyle]}>
+      <Animated.Text style={[styles.text, rTextStyle]}>Theme</Animated.Text>
       <Animated.View style={[styles.circle, rCircleStyle]}>
         <Switch
           value={theme === 'dark'}
@@ -95,6 +107,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 8,
+  },
+  text: {
+    fontSize: 70,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    letterSpacing: 14,
+    marginBottom: 35,
   },
 });
 
