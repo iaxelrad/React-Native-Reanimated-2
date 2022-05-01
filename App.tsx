@@ -18,11 +18,15 @@ const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const App = () => {
   const scale = useSharedValue(1);
+  const focalX = useSharedValue(0);
+  const focalY = useSharedValue(0);
 
   const pinchHandler =
     useAnimatedGestureHandler<PinchGestureHandlerGestureEvent>({
       onActive: event => {
         scale.value = event.scale;
+        focalX.value = event.focalX;
+        focalY.value = event.focalY;
       },
       onEnd: () => {
         scale.value = withTiming(1);
@@ -34,9 +38,22 @@ const App = () => {
       transform: [{scale: scale.value}],
     };
   });
+
+  const focalPointStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: focalX.value}, {translateY: focalY.value}],
+    };
+  });
+
   return (
     <PinchGestureHandler onGestureEvent={pinchHandler}>
-      <AnimatedImage style={[styles.image, rStyle]} source={{uri: imageUri}} />
+      <Animated.View style={styles.animatedViewContainer}>
+        <AnimatedImage
+          style={[styles.image, rStyle]}
+          source={{uri: imageUri}}
+        />
+        <Animated.View style={[styles.focalPoint, focalPointStyle]} />
+      </Animated.View>
     </PinchGestureHandler>
   );
 };
@@ -48,7 +65,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  animatedViewContainer: {flex: 1},
   image: {flex: 1},
+  focalPoint: {
+    ...StyleSheet.absoluteFillObject,
+    width: 20,
+    height: 20,
+    backgroundColor: 'blue',
+    borderRadius: 10,
+  },
 });
 
 export default App;
