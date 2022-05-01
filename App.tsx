@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {StyleSheet, Switch, View} from 'react-native';
+import {Dimensions, StyleSheet, Switch} from 'react-native';
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
   useDerivedValue,
-  useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -39,6 +38,17 @@ const App = () => {
     const backgroundColor = interpolateColor(
       progress.value,
       [0, 1],
+      [Colors.light.circle, Colors.dark.circle],
+    );
+    return {
+      backgroundColor,
+    };
+  });
+
+  const rCircleStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      progress.value,
+      [0, 1],
       [Colors.light.background, Colors.dark.background],
     );
     return {
@@ -48,17 +58,21 @@ const App = () => {
 
   return (
     <Animated.View style={[styles.backgroundStyle, rStyle]}>
-      <Switch
-        value={theme === 'dark'}
-        onValueChange={toggled => {
-          setTheme(toggled ? 'dark' : 'light');
-        }}
-        trackColor={SWITCH_TRACK_COLOR}
-        thumbColor={'violet'}
-      />
+      <Animated.View style={[styles.circle, rCircleStyle]}>
+        <Switch
+          value={theme === 'dark'}
+          onValueChange={toggled => {
+            setTheme(toggled ? 'dark' : 'light');
+          }}
+          trackColor={SWITCH_TRACK_COLOR}
+          thumbColor={'violet'}
+        />
+      </Animated.View>
     </Animated.View>
   );
 };
+
+const SIZE = Dimensions.get('window').width * 0.7;
 
 const styles = StyleSheet.create({
   backgroundStyle: {
@@ -66,6 +80,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  circle: {
+    width: SIZE,
+    height: SIZE,
+    borderRadius: SIZE / 2,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowOffset: {
+      width: 0,
+      height: 20,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });
 
