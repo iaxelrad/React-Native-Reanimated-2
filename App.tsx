@@ -8,7 +8,7 @@ import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 const imageUri =
@@ -23,6 +23,9 @@ const App = () => {
     useAnimatedGestureHandler<PinchGestureHandlerGestureEvent>({
       onActive: event => {
         scale.value = event.scale;
+      },
+      onEnd: () => {
+        scale.value = withTiming(1);
       },
     });
 
