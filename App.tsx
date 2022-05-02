@@ -12,18 +12,26 @@ import Animated, {
   useSharedValue,
   withDelay,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const App = () => {
   const scale = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
   const doubleTapRef = useRef();
 
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: Math.max(scale.value, 0)}],
+    };
+  });
+
+  const rTextStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
     };
   });
 
@@ -35,11 +43,17 @@ const App = () => {
     });
   }, []);
 
+  const onSingleTap = useCallback(() => {
+    opacity.value = withTiming(0, undefined, isFinished => {
+      if (isFinished) {
+        opacity.value = withDelay(500, withTiming(1));
+      }
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <TapGestureHandler
-        waitFor={doubleTapRef}
-        onHandlerStateChange={() => console.log('SINGLE_TAP')}>
+      <TapGestureHandler waitFor={doubleTapRef} onActivated={onSingleTap}>
         <TapGestureHandler
           maxDelayMs={250}
           ref={doubleTapRef}
@@ -55,6 +69,9 @@ const App = () => {
                 resizeMode="center"
               />
             </ImageBackground>
+            <Animated.Text style={[styles.turtles, rTextStyle]}>
+              🐢🐢🐢🐢
+            </Animated.Text>
           </Animated.View>
         </TapGestureHandler>
       </TapGestureHandler>
@@ -84,6 +101,7 @@ const styles = StyleSheet.create({
     shadowRadius: 35,
     shadowColor: 'black',
   },
+  turtles: {fontSize: 40, textAlign: 'center', marginTop: 30},
 });
 
 export default App;
