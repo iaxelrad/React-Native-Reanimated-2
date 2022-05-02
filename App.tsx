@@ -1,14 +1,15 @@
 import React from 'react';
-import {Text, StyleSheet, View, StatusBar} from 'react-native';
+import {Dimensions, Image, StyleSheet, View} from 'react-native';
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <Text>Pinch Gesture Handler</Text>
-      <StatusBar barStyle="dark-content" />
+      <Image source={require('./assets/image.jpeg')} style={styles.image} />
     </View>
   );
 };
+
+const {width: SIZE} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -16,6 +17,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  image: {
+    width: SIZE,
+    height: SIZE,
   },
 });
 
