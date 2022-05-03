@@ -32,6 +32,7 @@ const Page: FC<PageProps> = ({index, title, translateX}) => {
   );
 };
 
+export {PAGE_WIDTH};
 export default Page;
 
 const styles = StyleSheet.create({
