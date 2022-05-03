@@ -7,6 +7,7 @@ import {
 import Animated, {
   useAnimatedGestureHandler,
   useSharedValue,
+  withDecay,
 } from 'react-native-reanimated';
 import Page from './components/Page';
 
@@ -28,7 +29,9 @@ const App = () => {
     onActive: (event, context) => {
       translateX.value = event.translationX + context.x;
     },
-    onEnd: () => {},
+    onEnd: event => {
+      translateX.value = withDecay({velocity: event.velocityX});
+    },
   });
   return (
     <View style={styles.container}>
