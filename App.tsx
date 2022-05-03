@@ -1,11 +1,15 @@
 import React from 'react';
-import {Text, StyleSheet, View, StatusBar} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import Page from './components/Page';
+
+const titles = ['whats', 'up', 'mobile', 'developers?'];
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <Text>Pinch Gesture Handler</Text>
-      <StatusBar barStyle="dark-content" />
+      {titles.map((title, index) => {
+        return <Page key={index.toString()} title={title} index={index} />;
+      })}
     </View>
   );
 };
@@ -14,8 +18,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
