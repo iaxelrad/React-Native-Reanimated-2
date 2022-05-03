@@ -12,16 +12,24 @@ import Page from './components/Page';
 
 const titles = ['whats', 'up', 'mobile', 'developers?'];
 
+type ContextType = {
+  x: number;
+};
+
 const App = () => {
   const translateX = useSharedValue(0);
-  const panGestureEvent =
-    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-      onStart: () => {},
-      onActive: event => {
-        translateX.value = event.translationX;
-      },
-      onEnd: () => {},
-    });
+  const panGestureEvent = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    ContextType
+  >({
+    onStart: (_, context) => {
+      context.x = translateX.value;
+    },
+    onActive: (event, context) => {
+      translateX.value = event.translationX + context.x;
+    },
+    onEnd: () => {},
+  });
   return (
     <View style={styles.container}>
       <PanGestureHandler onGestureEvent={panGestureEvent}>
