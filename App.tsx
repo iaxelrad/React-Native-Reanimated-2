@@ -5,6 +5,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  cancelAnimation,
   useAnimatedGestureHandler,
   useDerivedValue,
   useSharedValue,
@@ -33,6 +34,7 @@ const App = () => {
   >({
     onStart: (_, context) => {
       context.x = clampedTranslatesX.value;
+      cancelAnimation(translateX);
     },
     onActive: (event, context) => {
       translateX.value = event.translationX + context.x;
