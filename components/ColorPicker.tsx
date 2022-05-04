@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 import {
   PanGestureHandler,
@@ -46,23 +46,23 @@ const ColorPicker: FC<ColorPickerProps> = ({
     );
   });
 
+  const onEnd = useCallback(() => {
+    'worklet';
+    translateY.value = withSpring(0);
+    scale.value = withSpring(1);
+  }, []);
+
   const panGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
     ContextType
   >({
     onStart: (_, context) => {
       context.x = adjustedTranslateX.value;
-
-      translateY.value = withSpring(-CIRCLE_PICKER_SIZE);
-      scale.value = withSpring(1.2);
     },
     onActive: (event, context) => {
       translateX.value = event.translationX + context.x;
     },
-    onEnd: () => {
-      translateY.value = withSpring(0);
-      scale.value = withSpring(1);
-    },
+    onEnd,
   });
 
   const tapGestureEvent =
@@ -72,10 +72,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
         scale.value = withSpring(1.2);
         translateX.value = withTiming(event.absoluteX - CIRCLE_PICKER_SIZE);
       },
-      onEnd: () => {
-        translateY.value = withSpring(0);
-        scale.value = withSpring(1);
-      },
+      onEnd,
     });
 
   const rStyle = useAnimatedStyle(() => {
