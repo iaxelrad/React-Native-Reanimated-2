@@ -12,6 +12,7 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
 
 interface ColorPickerProps extends LinearGradientProps {
@@ -29,6 +30,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
   maxWidth,
 }) => {
   const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(1);
 
   const adjustedTranslateX = useDerivedValue(() => {
     console.log('adjustedTranslateX', translateX.value);
@@ -45,16 +48,26 @@ const ColorPicker: FC<ColorPickerProps> = ({
   >({
     onStart: (_, context) => {
       context.x = adjustedTranslateX.value;
+
+      translateY.value = withSpring(-CIRCLE_PICKER_SIZE);
+      scale.value = withSpring(1.2);
     },
     onActive: (event, context) => {
       translateX.value = event.translationX + context.x;
     },
-    onEnd: () => {},
+    onEnd: () => {
+      translateY.value = withSpring(0);
+      scale.value = withSpring(1);
+    },
   });
 
   const rStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: adjustedTranslateX.value}],
+      transform: [
+        {translateX: adjustedTranslateX.value},
+        {scale: scale.value},
+        {translateY: translateY.value},
+      ],
     };
   });
 
