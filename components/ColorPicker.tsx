@@ -1,6 +1,7 @@
 import React, {FC, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 import {
+  GestureHandlerRootView,
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
   TapGestureHandler,
@@ -101,25 +102,27 @@ const ColorPicker: FC<ColorPickerProps> = ({
   });
 
   return (
-    <TapGestureHandler onGestureEvent={tapGestureEvent}>
-      <Animated.View>
-        <PanGestureHandler onGestureEvent={panGestureEvent}>
-          <Animated.View style={{justifyContent: 'center'}}>
-            <LinearGradient
-              colors={colors}
-              start={start}
-              end={end}
-              style={style}
-            />
-            <Animated.View style={[styles.picker, rStyle]}>
-              <Animated.View
-                style={[styles.internalPicker, rInternalPickerStyle]}
+    <GestureHandlerRootView>
+      <TapGestureHandler onGestureEvent={tapGestureEvent}>
+        <Animated.View>
+          <PanGestureHandler onGestureEvent={panGestureEvent}>
+            <Animated.View style={{justifyContent: 'center'}}>
+              <LinearGradient
+                colors={colors}
+                start={start}
+                end={end}
+                style={style}
               />
+              <Animated.View style={[styles.picker, rStyle]}>
+                <Animated.View
+                  style={[styles.internalPicker, rInternalPickerStyle]}
+                />
+              </Animated.View>
             </Animated.View>
-          </Animated.View>
-        </PanGestureHandler>
-      </Animated.View>
-    </TapGestureHandler>
+          </PanGestureHandler>
+        </Animated.View>
+      </TapGestureHandler>
+    </GestureHandlerRootView>
   );
 };
 
