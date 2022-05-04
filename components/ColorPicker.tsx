@@ -8,6 +8,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  interpolateColor,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
@@ -34,8 +35,6 @@ const ColorPicker: FC<ColorPickerProps> = ({
   const scale = useSharedValue(1);
 
   const adjustedTranslateX = useDerivedValue(() => {
-    console.log('adjustedTranslateX', translateX.value);
-
     return Math.min(
       Math.max(translateX.value, 0),
       maxWidth - CIRCLE_PICKER_SIZE,
@@ -71,11 +70,28 @@ const ColorPicker: FC<ColorPickerProps> = ({
     };
   });
 
+  const rInternalPickerStyle = useAnimatedStyle(() => {
+    const inputRange = colors.map((_, i) => (i / colors.length) * maxWidth);
+    const backgroundColor = interpolateColor(
+      translateX.value,
+      inputRange,
+      colors,
+    );
+
+    return {
+      backgroundColor,
+    };
+  });
+
   return (
     <PanGestureHandler onGestureEvent={panGestureEvent}>
       <Animated.View style={{justifyContent: 'center'}}>
         <LinearGradient colors={colors} start={start} end={end} style={style} />
-        <Animated.View style={[styles.picker, rStyle]} />
+        <Animated.View style={[styles.picker, rStyle]}>
+          <Animated.View
+            style={[styles.internalPicker, rInternalPickerStyle]}
+          />
+        </Animated.View>
       </Animated.View>
     </PanGestureHandler>
   );
@@ -84,6 +100,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
 export default ColorPicker;
 
 const CIRCLE_PICKER_SIZE = 45;
+const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE / 2;
 
 const styles = StyleSheet.create({
   picker: {
@@ -92,5 +109,14 @@ const styles = StyleSheet.create({
     width: CIRCLE_PICKER_SIZE,
     height: CIRCLE_PICKER_SIZE,
     borderRadius: CIRCLE_PICKER_SIZE / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  internalPicker: {
+    width: INTERNAL_PICKER_SIZE,
+    height: INTERNAL_PICKER_SIZE,
+    borderRadius: INTERNAL_PICKER_SIZE / 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.2)',
   },
 });
