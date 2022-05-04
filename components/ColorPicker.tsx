@@ -1,12 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
-import LinearGradient, {
-  LinearGradientProps,
-} from 'react-native-linear-gradient';
+import {StyleSheet} from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
+import LinearGradient, {
+  LinearGradientProps,
+} from 'react-native-linear-gradient';
 import Animated, {
   interpolateColor,
   useAnimatedGestureHandler,
@@ -18,6 +18,7 @@ import Animated, {
 
 interface ColorPickerProps extends LinearGradientProps {
   maxWidth: number;
+  onColoredChanged?: (color: string | number) => void;
 }
 type ContextType = {
   x: number;
@@ -29,6 +30,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
   end,
   style,
   maxWidth,
+  onColoredChanged,
 }) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -77,6 +79,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
       inputRange,
       colors,
     );
+
+    onColoredChanged?.(backgroundColor);
 
     return {
       backgroundColor,

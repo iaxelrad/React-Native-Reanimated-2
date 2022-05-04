@@ -1,5 +1,9 @@
-import React from 'react';
-import {Text, StyleSheet, View, StatusBar, Dimensions} from 'react-native';
+import React, {useCallback} from 'react';
+import {Dimensions, StyleSheet, View} from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import ColorPicker from './components/ColorPicker';
 
 const COLORS = [
@@ -16,9 +20,27 @@ const COLORS = [
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
 
 const App = () => {
+  const pickedColor = useSharedValue<string | number>(COLORS[0]);
+
+  const onColoredChanged = useCallback(
+    (color: string | number) => {
+      'worklet';
+      pickedColor.value = color;
+    },
+    [pickedColor],
+  );
+
+  const rStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: pickedColor.value,
+    };
+  });
+
   return (
     <>
-      <View style={styles.topContainer} />
+      <View style={styles.topContainer}>
+        <Animated.View style={[styles.colorCircle, rStyle]} />
+      </View>
       <View style={styles.bottomContainer}>
         <ColorPicker
           colors={COLORS}
@@ -26,6 +48,7 @@ const App = () => {
           end={{x: 1, y: 0}}
           style={styles.gradient}
           maxWidth={PICKER_WIDTH}
+          onColoredChanged={onColoredChanged}
         />
       </View>
     </>
@@ -34,11 +57,19 @@ const App = () => {
 
 const {width} = Dimensions.get('window');
 const PICKER_WIDTH = width * 0.9;
+const CIRCLE_SIZE = width * 0.8;
 
 const styles = StyleSheet.create({
   topContainer: {
     flex: 3,
-    backgroundColor: 'white',
+    backgroundColor: BACKGROUND_COLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  colorCircle: {
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
   },
   bottomContainer: {
     flex: 1,
