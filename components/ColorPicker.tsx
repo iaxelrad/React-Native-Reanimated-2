@@ -10,33 +10,51 @@ import {
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
 
-interface ColorPickerProps extends LinearGradientProps {}
+interface ColorPickerProps extends LinearGradientProps {
+  maxWidth: number;
+}
 type ContextType = {
   x: number;
 };
 
-const ColorPicker: FC<ColorPickerProps> = ({colors, start, end, style}) => {
+const ColorPicker: FC<ColorPickerProps> = ({
+  colors,
+  start,
+  end,
+  style,
+  maxWidth,
+}) => {
   const translateX = useSharedValue(0);
+
+  const adjustedTranslateX = useDerivedValue(() => {
+    console.log('adjustedTranslateX', translateX.value);
+
+    return Math.min(
+      Math.max(translateX.value, 0),
+      maxWidth - CIRCLE_PICKER_SIZE,
+    );
+  });
 
   const panGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
     ContextType
   >({
     onStart: (_, context) => {
-      context.x = translateX.value;
+      context.x = adjustedTranslateX.value;
     },
     onActive: (event, context) => {
       translateX.value = event.translationX + context.x;
     },
-    onEnd: event => {},
+    onEnd: () => {},
   });
 
   const rStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: translateX.value}],
+      transform: [{translateX: adjustedTranslateX.value}],
     };
   });
 
