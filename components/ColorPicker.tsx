@@ -3,6 +3,8 @@ import {StyleSheet} from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
+  TapGestureHandler,
+  TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import LinearGradient, {
   LinearGradientProps,
@@ -14,6 +16,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 interface ColorPickerProps extends LinearGradientProps {
@@ -62,6 +65,19 @@ const ColorPicker: FC<ColorPickerProps> = ({
     },
   });
 
+  const tapGestureEvent =
+    useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
+      onStart: event => {
+        translateY.value = withSpring(-CIRCLE_PICKER_SIZE);
+        scale.value = withSpring(1.2);
+        translateX.value = withTiming(event.absoluteX - CIRCLE_PICKER_SIZE);
+      },
+      onEnd: () => {
+        translateY.value = withSpring(0);
+        scale.value = withSpring(1);
+      },
+    });
+
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -88,16 +104,25 @@ const ColorPicker: FC<ColorPickerProps> = ({
   });
 
   return (
-    <PanGestureHandler onGestureEvent={panGestureEvent}>
-      <Animated.View style={{justifyContent: 'center'}}>
-        <LinearGradient colors={colors} start={start} end={end} style={style} />
-        <Animated.View style={[styles.picker, rStyle]}>
-          <Animated.View
-            style={[styles.internalPicker, rInternalPickerStyle]}
-          />
-        </Animated.View>
+    <TapGestureHandler onGestureEvent={tapGestureEvent}>
+      <Animated.View>
+        <PanGestureHandler onGestureEvent={panGestureEvent}>
+          <Animated.View style={{justifyContent: 'center'}}>
+            <LinearGradient
+              colors={colors}
+              start={start}
+              end={end}
+              style={style}
+            />
+            <Animated.View style={[styles.picker, rStyle]}>
+              <Animated.View
+                style={[styles.internalPicker, rInternalPickerStyle]}
+              />
+            </Animated.View>
+          </Animated.View>
+        </PanGestureHandler>
       </Animated.View>
-    </PanGestureHandler>
+    </TapGestureHandler>
   );
 };
 
