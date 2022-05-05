@@ -1,11 +1,11 @@
 import React from 'react';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import SlidingCounter from './components/SlidingCounter';
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="default" />
-      <Text>Default App.tsx</Text>
+      <SlidingCounter />
     </View>
   );
 };
