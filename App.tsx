@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import {Dimensions, SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -15,6 +15,10 @@ type ContextType = {
   x: number;
 };
 
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
+
+const THRESHOLD = SCREEN_WIDTH / 3;
+
 const App = () => {
   const translateX = useSharedValue(0);
   const panGestureEvent = useAnimatedGestureHandler<
@@ -28,7 +32,11 @@ const App = () => {
       translateX.value = event.translationX + context.x;
     },
     onEnd: () => {
-      translateX.value = withTiming(0);
+      if (translateX.value <= THRESHOLD) {
+        translateX.value = withTiming(0);
+      } else {
+        translateX.value = withTiming(SCREEN_WIDTH / 2);
+      }
     },
   });
 
