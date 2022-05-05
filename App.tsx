@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import ListItem from './components/ListItem';
@@ -22,13 +22,18 @@ const BACKGROUND_COLOR = '#fafbff';
 
 const App = () => {
   const [tasks, setTasks] = useState(TASKS);
+
+  const onDismiss = useCallback((task: TaskInterface) => {
+    setTasks(tasks.filter(item => item.index !== task.index));
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.title}>Tasks</Text>
       <ScrollView style={{flex: 1}}>
         {tasks.map(task => (
-          <ListItem key={task.index} task={task} />
+          <ListItem key={task.index} task={task} onDismiss={onDismiss} />
         ))}
       </ScrollView>
     </SafeAreaView>

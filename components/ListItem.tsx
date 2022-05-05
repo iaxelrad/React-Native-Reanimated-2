@@ -6,6 +6,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -16,6 +17,7 @@ import {TaskInterface} from '../App';
 
 interface ListItemsProps {
   task: TaskInterface;
+  onDismiss?: (task: TaskInterface) => void;
 }
 
 const LIST_ITEM_HEIGHT = 70;
@@ -23,7 +25,7 @@ const LIST_ITEM_HEIGHT = 70;
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3;
 
-const ListItem: FC<ListItemsProps> = ({task}) => {
+const ListItem: FC<ListItemsProps> = ({task, onDismiss}) => {
   const translateX = useSharedValue(0);
   const itemHeight = useSharedValue(LIST_ITEM_HEIGHT);
   const marginVertical = useSharedValue(10);
@@ -39,7 +41,11 @@ const ListItem: FC<ListItemsProps> = ({task}) => {
         translateX.value = withTiming(-SCREEN_WIDTH);
         itemHeight.value = withTiming(0);
         marginVertical.value = withTiming(0);
-        opacity.value = withTiming(0);
+        opacity.value = withTiming(0, undefined, isFinished => {
+          if (isFinished) {
+            runOnJS(onDismiss)(task);
+          }
+        });
       } else {
         translateX.value = withTiming(0);
       }
