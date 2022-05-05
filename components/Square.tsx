@@ -39,7 +39,7 @@ const Square: FC<SquareProps> = ({index, progress}) => {
       return withTiming((index - N) * SQUARE_SIZE);
     }
 
-    return -index * SQUARE_SIZE;
+    return withTiming(-index * SQUARE_SIZE);
   });
 
   const rStyle = useAnimatedStyle(() => {
@@ -51,12 +51,7 @@ const Square: FC<SquareProps> = ({index, progress}) => {
     };
   });
 
-  return (
-    <Animated.View
-      style={[styles.container, {opacity: (index + 1) / N}, rStyle]}
-      key={index}
-    />
-  );
+  return <Animated.View style={[styles.container, rStyle]} key={index} />;
 };
 
 export default Square;
