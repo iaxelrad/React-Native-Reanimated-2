@@ -7,8 +7,8 @@ const App = () => {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    progress.value = withTiming(2 * Math.PI, {
-      duration: 4000,
+    progress.value = withTiming(4 * Math.PI, {
+      duration: 8000,
       easing: Easing.linear,
     });
   }, []);
