@@ -1,6 +1,10 @@
 import React, {useEffect} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
-import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {
+  useAnimatedProps,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import Svg, {Circle} from 'react-native-svg';
 
 const BACKGROUND_COLOR = '#444b6f';
@@ -21,6 +25,10 @@ const App = () => {
     progress.value = withTiming(1, {duration: 2000});
   }, []);
 
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: CIRCLE_LENGTH * (1 - progress.value),
+  }));
+
   return (
     <View style={styles.container}>
       <Svg>
@@ -38,7 +46,8 @@ const App = () => {
           stroke={STROKE_COLOR}
           strokeWidth={15}
           strokeDasharray={CIRCLE_LENGTH}
-          strokeDashoffset={CIRCLE_LENGTH * 0.5}
+          animatedProps={animatedProps}
+          strokeLinecap="round"
         />
       </Svg>
     </View>
