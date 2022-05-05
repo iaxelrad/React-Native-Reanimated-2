@@ -8,16 +8,29 @@ import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
+
+type ContextType = {
+  x: number;
+};
 
 const App = () => {
   const translateX = useSharedValue(0);
-  const panGestureEvent =
-    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-      onActive: event => {
-        translateX.value = event.translationX;
-      },
-    });
+  const panGestureEvent = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    ContextType
+  >({
+    onStart: (_, context) => {
+      context.x = translateX.value;
+    },
+    onActive: (event, context) => {
+      translateX.value = event.translationX + context.x;
+    },
+    onEnd: () => {
+      translateX.value = withTiming(0);
+    },
+  });
 
   const rStyle = useAnimatedStyle(() => {
     return {
