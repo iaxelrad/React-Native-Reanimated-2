@@ -5,8 +5,10 @@ import {
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  measure,
   runOnJS,
   useAnimatedGestureHandler,
+  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -23,9 +25,17 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   const centerY = useSharedValue(0);
   const scale = useSharedValue(0);
 
+  const aRef = useAnimatedRef<View>();
+  const width = useSharedValue(0);
+  const height = useSharedValue(0);
+
   const tapGestureEvent =
     useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
       onStart: event => {
+        const layout = measure(aRef);
+        width.value = layout.width;
+        height.value = layout.height;
+
         centerX.value = event.x;
         centerY.value = event.y;
 
@@ -41,7 +51,7 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
     });
 
   const rStyle = useAnimatedStyle(() => {
-    const circleRadius = 200;
+    const circleRadius = Math.sqrt(width.value ** 2 + height.value ** 2);
 
     const translateX = centerX.value - circleRadius;
     const translateY = centerY.value - circleRadius;
@@ -66,12 +76,14 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   });
 
   return (
-    <TapGestureHandler onGestureEvent={tapGestureEvent}>
-      <Animated.View style={style}>
-        <View>{children}</View>
-        <Animated.View style={rStyle} />
-      </Animated.View>
-    </TapGestureHandler>
+    <View ref={aRef}>
+      <TapGestureHandler onGestureEvent={tapGestureEvent}>
+        <Animated.View style={style}>
+          <View>{children}</View>
+          <Animated.View style={rStyle} />
+        </Animated.View>
+      </TapGestureHandler>
+    </View>
   );
 };
 
