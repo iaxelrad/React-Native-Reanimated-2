@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {StyleProp, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
@@ -7,6 +7,7 @@ import {
 import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
 
 interface RippleProps {
@@ -27,11 +28,36 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
       onEnd: () => {},
     });
 
+  const rStyle = useAnimatedStyle(() => {
+    const circleRadius = 200;
+
+    return {
+      width: circleRadius * 2,
+      height: circleRadius * 2,
+      borderRadius: circleRadius,
+      backgroundColor: 'red',
+      position: 'absolute',
+      opacity: 0.2,
+      transform: [
+        {
+          scale: 0.5,
+        },
+      ],
+    };
+  });
+
   return (
     <TapGestureHandler onGestureEvent={tapGestureEvent}>
-      <Animated.View style={style}>{children}</Animated.View>
+      <Animated.View style={style}>
+        <View>{children}</View>
+        <Animated.View style={rStyle} />
+      </Animated.View>
     </TapGestureHandler>
   );
 };
+
+const styles = StyleSheet.create({
+  circle: {},
+});
 
 export default Ripple;
