@@ -1,49 +1,21 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import ListItem from './components/ListItem';
-
-const TITLES = [
-  'Record the dismissible tutorial 🎥',
-  'Leave 👍🏼 to the video',
-  'Check YouTube comments',
-  'Subscribe to the channel 🚀',
-  'Leave a ⭐️ on the GitHub Repo',
-];
-
-export interface TaskInterface {
-  title: string;
-  index: number;
-}
-
-const TASKS: TaskInterface[] = TITLES.map((title, index) => ({title, index}));
-
-const BACKGROUND_COLOR = '#fafbff';
+import React from 'react';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 
 const App = () => {
-  const [tasks, setTasks] = useState(TASKS);
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="auto" />
-      <Text style={styles.title}>Tasks</Text>
-      <ScrollView style={{flex: 1}}>
-        {tasks.map(task => (
-          <ListItem key={task.index} task={task} />
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+      <Text>Default App.tsx</Text>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND_COLOR,
-  },
-  title: {
-    fontSize: 60,
-    marginVertical: 20,
-    paddingLeft: '5%',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
