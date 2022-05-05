@@ -1,15 +1,14 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import {StatusBar, StyleSheet, View} from 'react-native';
 import {Easing, useSharedValue, withTiming} from 'react-native-reanimated';
 import Square from './components/Square';
-import {N, SQUARE_SIZE} from './constants';
 
 const App = () => {
   const progress = useSharedValue(0);
 
   useEffect(() => {
     progress.value = withTiming(2 * Math.PI, {
-      duration: 1000,
+      duration: 4000,
       easing: Easing.linear,
     });
   }, []);
