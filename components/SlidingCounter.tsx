@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -7,6 +7,7 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -28,7 +29,25 @@ const SlidingCounter = () => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
+  const [count, setCount] = useState(0);
+
   const MAX_SLIDE_OFFSET = BUTTON_WIDTH * 0.3;
+
+  //wrapper function
+  const incrementCount = useCallback(() => {
+    //external library function
+    setCount(currentCount => currentCount + 1);
+  }, []);
+
+  const decrementCount = useCallback(() => {
+    //external library function
+    setCount(currentCount => currentCount - 1);
+  }, []);
+
+  const resetCount = useCallback(() => {
+    //external library function
+    setCount(0);
+  }, []);
 
   const onPanGestureEvent =
     useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
@@ -42,6 +61,15 @@ const SlidingCounter = () => {
         translateY.value = clamp(event.translationY, 0, MAX_SLIDE_OFFSET);
       },
       onEnd: () => {
+        if (translateY.value === MAX_SLIDE_OFFSET) {
+          runOnJS(resetCount)();
+        } else if (translateX.value === MAX_SLIDE_OFFSET) {
+          //Increment
+          runOnJS(incrementCount)();
+        } else if (translateX.value === -MAX_SLIDE_OFFSET) {
+          //Decrement
+          runOnJS(decrementCount)();
+        }
         translateX.value = withSpring(0);
         translateY.value = withSpring(0);
       },
@@ -98,7 +126,9 @@ const SlidingCounter = () => {
         </Animated.View>
         <View style={styles.circleContainer}>
           <PanGestureHandler onGestureEvent={onPanGestureEvent}>
-            <Animated.View style={[styles.circle, rStyle]} />
+            <Animated.View style={[styles.circle, rStyle]}>
+              <Text style={styles.text}>{count}</Text>
+            </Animated.View>
           </PanGestureHandler>
         </View>
       </View>
@@ -127,10 +157,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#232323',
     borderRadius: CIRCLE_SIZE / 2,
     position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  clear: {
-    opacity: 0,
-  },
+  text: {fontSize: 25, color: 'white'},
 });
 
 export default SlidingCounter;
