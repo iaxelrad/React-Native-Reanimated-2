@@ -1,9 +1,9 @@
 import React from 'react';
-import {Text, StyleSheet, View, StatusBar, Dimensions} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import Svg, {Circle} from 'react-native-svg';
 
 const BACKGROUND_COLOR = '#444b6f';
-const BACKGROUND_STROKE_COLOR = '#303858';
+const BACKGROUND_STROKE_COLOR = 'white';
 const STROKE_COLOR = '#a6e1fa';
 
 const {width, height} = Dimensions.get('window');
@@ -25,6 +25,8 @@ const App = () => {
           r={CIRCLE_RADIUS}
           stroke={STROKE_COLOR}
           strokeWidth={15}
+          strokeDasharray={CIRCLE_LENGTH}
+          strokeDashoffset={CIRCLE_LENGTH * 0.7}
         />
       </Svg>
     </View>
