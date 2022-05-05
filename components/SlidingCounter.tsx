@@ -6,6 +6,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  interpolate,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +18,7 @@ const ICON_SIZE = 20;
 const CIRCLE_SIZE = 50;
 
 const BUTTON_WIDTH = 170;
+const MAX_SLIDE_OFFSET = BUTTON_WIDTH * 0.3;
 
 const SlidingCounter = () => {
   const translateX = useSharedValue(0);
@@ -30,7 +32,6 @@ const SlidingCounter = () => {
     useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
       onStart: () => {},
       onActive: event => {
-        const MAX_SLIDE_OFFSET = BUTTON_WIDTH * 0.3;
         translateX.value = clamp(
           event.translationX,
           -MAX_SLIDE_OFFSET,
@@ -48,12 +49,32 @@ const SlidingCounter = () => {
     };
   });
 
+  const rPlusMinusIconStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [-MAX_SLIDE_OFFSET, 0, MAX_SLIDE_OFFSET],
+      [0.4, 0.8, 0.4],
+    );
+    return {
+      opacity,
+    };
+  });
+
   return (
     <GestureHandlerRootView>
       <View style={styles.button}>
-        <Icon name="minus" size={ICON_SIZE} color="#ffffff" />
-        <Icon name="close" size={ICON_SIZE} color="#ffffff" />
-        <Icon name="plus" size={ICON_SIZE} color="#ffffff" />
+        <Animated.View style={rPlusMinusIconStyle}>
+          <Icon name="minus" size={ICON_SIZE} color="#ffffff" />
+        </Animated.View>
+        <Icon
+          name="close"
+          size={ICON_SIZE}
+          color="#ffffff"
+          style={styles.clear}
+        />
+        <Animated.View style={rPlusMinusIconStyle}>
+          <Icon name="plus" size={ICON_SIZE} color="#ffffff" />
+        </Animated.View>
         <PanGestureHandler onGestureEvent={onPanGestureEvent}>
           <Animated.View style={[styles.circleContainer, rStyle]}>
             <View style={styles.circle} />
@@ -85,6 +106,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#232323',
     borderRadius: CIRCLE_SIZE / 2,
     position: 'absolute',
+  },
+  clear: {
+    opacity: 0,
   },
 });
 
