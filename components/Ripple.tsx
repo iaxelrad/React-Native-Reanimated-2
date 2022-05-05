@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 
 interface RippleProps {
@@ -20,12 +21,16 @@ interface RippleProps {
 const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   const centerX = useSharedValue(0);
   const centerY = useSharedValue(0);
+  const scale = useSharedValue(0);
 
   const tapGestureEvent =
     useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
       onStart: event => {
         centerX.value = event.x;
         centerY.value = event.y;
+
+        scale.value = 0;
+        scale.value = withTiming(1, {duration: 1000});
       },
       onActive: () => {
         if (onTap) {
@@ -36,7 +41,7 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
     });
 
   const rStyle = useAnimatedStyle(() => {
-    const circleRadius = 20;
+    const circleRadius = 200;
 
     const translateX = centerX.value - circleRadius;
     const translateY = centerY.value - circleRadius;
@@ -54,7 +59,7 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
         {translateX},
         {translateY},
         {
-          scale: 1,
+          scale: scale.value,
         },
       ],
     };
