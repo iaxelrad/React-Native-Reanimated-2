@@ -1,5 +1,11 @@
-import React, {useEffect} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
   useAnimatedProps,
   useDerivedValue,
@@ -21,11 +27,8 @@ const CIRCLE_RADIUS = CIRCLE_LENGTH / (2 * Math.PI);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const App = () => {
+  const [buttonText, setButtonText] = useState('Run');
   const progress = useSharedValue(0);
-
-  useEffect(() => {
-    progress.value = withTiming(1, {duration: 2000});
-  }, []);
 
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: CIRCLE_LENGTH * (1 - progress.value),
@@ -35,9 +38,13 @@ const App = () => {
     return `${Math.floor(progress.value * 100)}`;
   });
 
+  const onPress = useCallback(() => {
+    progress.value = withTiming(progress.value > 0 ? 0 : 1, {duration: 2000});
+    setButtonText(progress.value > 0 ? 'Run' : 'Reset');
+  }, []);
+
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.progressText}>{progressText.value}</Text> */}
       <ReText style={styles.progressText} text={progressText} />
       <Svg style={{position: 'absolute'}}>
         <Circle
@@ -58,6 +65,9 @@ const App = () => {
           strokeLinecap="round"
         />
       </Svg>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.buttonText}>{buttonText}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -74,6 +84,22 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
     width: 200,
     textAlign: 'center',
+  },
+  button: {
+    position: 'absolute',
+    bottom: 80,
+    width: width * 0.8,
+    height: 60,
+    backgroundColor: BACKGROUND_STROKE_COLOR,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 25,
+    textAlign: 'center',
+    color: '#fff',
+    letterSpacing: 2,
   },
 });
 
