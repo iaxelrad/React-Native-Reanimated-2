@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {
+  GestureHandlerRootView,
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
@@ -50,7 +51,10 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
           runOnJS(onTap)();
         }
       },
-      onEnd: () => {
+      // onEnd: () => {
+      //   rippleOpacity.value = 0;
+      // },
+      onFinish: () => {
         rippleOpacity.value = 0;
       },
     });
@@ -81,14 +85,16 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   });
 
   return (
-    <View ref={aRef} style={style}>
-      <TapGestureHandler onGestureEvent={tapGestureEvent}>
-        <Animated.View style={[style, {overflow: 'hidden'}]}>
-          <View>{children}</View>
-          <Animated.View style={rStyle} />
-        </Animated.View>
-      </TapGestureHandler>
-    </View>
+    <GestureHandlerRootView>
+      <View ref={aRef} style={style}>
+        <TapGestureHandler onGestureEvent={tapGestureEvent}>
+          <Animated.View style={[style, {overflow: 'hidden'}]}>
+            <View>{children}</View>
+            <Animated.View style={rStyle} />
+          </Animated.View>
+        </TapGestureHandler>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
