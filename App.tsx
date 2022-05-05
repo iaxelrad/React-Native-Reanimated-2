@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Dimensions, SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {
   PanGestureHandler,
@@ -12,10 +12,13 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/Feather';
 
 type ContextType = {
   x: number;
 };
+
+const BACKGROUND_COLOR = '#1e1e23';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
@@ -67,27 +70,36 @@ const App = () => {
     };
   });
 
+  const onPress = useCallback(() => {
+    if (translateX.value > 0) {
+      translateX.value = withTiming(0);
+    } else {
+      translateX.value = withTiming(SCREEN_WIDTH / 2);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <PanGestureHandler onGestureEvent={panGestureEvent}>
-        <Animated.View style={[styles.animatedContainer, rStyle]} />
+        <Animated.View style={[styles.animatedContainer, rStyle]}>
+          <Icon
+            name="menu"
+            size={32}
+            color={BACKGROUND_COLOR}
+            style={styles.icon}
+            onPress={onPress}
+          />
+        </Animated.View>
       </PanGestureHandler>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1e1e23',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  animatedContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
+  container: {flex: 1, backgroundColor: BACKGROUND_COLOR},
+  animatedContainer: {flex: 1, backgroundColor: 'white'},
+  icon: {margin: 15},
 });
 
 export default App;
