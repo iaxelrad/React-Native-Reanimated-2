@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import {Dimensions, SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {
+  GestureHandlerRootView,
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
@@ -34,7 +35,7 @@ const App = () => {
       context.x = translateX.value;
     },
     onActive: (event, context) => {
-      translateX.value = event.translationX + context.x;
+      translateX.value = Math.max(event.translationX + context.x);
     },
     onEnd: () => {
       if (translateX.value <= THRESHOLD) {
@@ -79,20 +80,22 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <PanGestureHandler onGestureEvent={panGestureEvent}>
-        <Animated.View style={[styles.animatedContainer, rStyle]}>
-          <Icon
-            name="menu"
-            size={32}
-            color={BACKGROUND_COLOR}
-            style={styles.icon}
-            onPress={onPress}
-          />
-        </Animated.View>
-      </PanGestureHandler>
-    </SafeAreaView>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <PanGestureHandler onGestureEvent={panGestureEvent}>
+          <Animated.View style={[styles.animatedContainer, rStyle]}>
+            <Icon
+              name="menu"
+              size={32}
+              color={BACKGROUND_COLOR}
+              style={styles.icon}
+              onPress={onPress}
+            />
+          </Animated.View>
+        </PanGestureHandler>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
