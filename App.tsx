@@ -1,10 +1,12 @@
 import React, {useEffect} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import Animated, {
   useAnimatedProps,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {ReText} from 'react-native-redash';
 import Svg, {Circle} from 'react-native-svg';
 
 const BACKGROUND_COLOR = '#444b6f';
@@ -29,9 +31,15 @@ const App = () => {
     strokeDashoffset: CIRCLE_LENGTH * (1 - progress.value),
   }));
 
+  const progressText = useDerivedValue(() => {
+    return `${Math.floor(progress.value * 100)}`;
+  });
+
   return (
     <View style={styles.container}>
-      <Svg>
+      {/* <Text style={styles.progressText}>{progressText.value}</Text> */}
+      <ReText style={styles.progressText} text={progressText} />
+      <Svg style={{position: 'absolute'}}>
         <Circle
           cx={width / 2}
           cy={height / 2}
@@ -60,6 +68,12 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  progressText: {
+    fontSize: 80,
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 200,
+    textAlign: 'center',
   },
 });
 
