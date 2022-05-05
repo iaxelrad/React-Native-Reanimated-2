@@ -5,6 +5,7 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 import {N, SQUARE_SIZE} from '../constants';
 
@@ -33,6 +34,11 @@ const Square: FC<SquareProps> = ({index, progress}) => {
     if (rotate.value === finalAngle) {
       return withSpring(-N * SQUARE_SIZE);
     }
+
+    if (progress.value > 2 * Math.PI) {
+      return withTiming((index - N) * SQUARE_SIZE);
+    }
+
     return -index * SQUARE_SIZE;
   });
 
