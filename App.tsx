@@ -50,12 +50,20 @@ const App = () => {
       Extrapolate.CLAMP,
     );
 
+    const borderRadius = interpolate(
+      translateX.value,
+      [0, SCREEN_WIDTH / 2],
+      [0, 15],
+      Extrapolate.CLAMP,
+    );
+
     return {
       transform: [
         {perspective: 100},
         {translateX: translateX.value},
         {rotateY: `-${rotate}deg`},
       ],
+      borderRadius,
     };
   });
 
