@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {SafeAreaView, StatusBar, StyleSheet, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import ListItem from './components/ListItem';
 
@@ -27,13 +27,20 @@ const App = () => {
     setTasks(tasks.filter(item => item.index !== task.index));
   }, []);
 
+  const scrollRef = useRef<ScrollView>(null);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.title}>Tasks</Text>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView ref={scrollRef} style={{flex: 1}}>
         {tasks.map(task => (
-          <ListItem key={task.index} task={task} onDismiss={onDismiss} />
+          <ListItem
+            key={task.index}
+            task={task}
+            onDismiss={onDismiss}
+            simultaneousHandlers={scrollRef}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>
