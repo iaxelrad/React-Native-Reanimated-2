@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -20,6 +20,9 @@ interface ListItemsProps {
 
 const LIST_ITEM_HEIGHT = 70;
 
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
+const TRANSLATE_X_THRESHOLD = SCREEN_WIDTH * 0.3;
+
 const ListItem: FC<ListItemsProps> = ({task}) => {
   const translateX = useSharedValue(0);
 
@@ -28,7 +31,12 @@ const ListItem: FC<ListItemsProps> = ({task}) => {
       translateX.value = event.translationX;
     },
     onEnd: () => {
-      translateX.value = withTiming(0);
+      const shouldBeDismissed = translateX.value < TRANSLATE_X_THRESHOLD;
+      if (shouldBeDismissed) {
+        translateX.value = withTiming(-SCREEN_WIDTH);
+      } else {
+        translateX.value = withTiming(0);
+      }
     },
   });
 
