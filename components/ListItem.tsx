@@ -21,10 +21,13 @@ interface ListItemsProps {
 const LIST_ITEM_HEIGHT = 70;
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
-const TRANSLATE_X_THRESHOLD = SCREEN_WIDTH * 0.3;
+const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3;
 
 const ListItem: FC<ListItemsProps> = ({task}) => {
   const translateX = useSharedValue(0);
+  const itemHeight = useSharedValue(LIST_ITEM_HEIGHT);
+  const marginVertical = useSharedValue(10);
+  const opacity = useSharedValue(1);
 
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onActive: event => {
@@ -34,6 +37,9 @@ const ListItem: FC<ListItemsProps> = ({task}) => {
       const shouldBeDismissed = translateX.value < TRANSLATE_X_THRESHOLD;
       if (shouldBeDismissed) {
         translateX.value = withTiming(-SCREEN_WIDTH);
+        itemHeight.value = withTiming(0);
+        marginVertical.value = withTiming(0);
+        opacity.value = withTiming(0);
       } else {
         translateX.value = withTiming(0);
       }
@@ -53,9 +59,17 @@ const ListItem: FC<ListItemsProps> = ({task}) => {
     return {opacity};
   });
 
+  const rTaskContainerStyle = useAnimatedStyle(() => {
+    return {
+      height: itemHeight.value,
+      marginVertical: marginVertical.value,
+      opacity: opacity.value,
+    };
+  });
+
   return (
     <GestureHandlerRootView>
-      <View style={styles.taskContainer}>
+      <Animated.View style={[styles.taskContainer, rTaskContainerStyle]}>
         <Animated.View style={[styles.iconContainer, rIconContainerStyle]}>
           <FontAwesome5
             name={'trash-alt'}
@@ -68,7 +82,7 @@ const ListItem: FC<ListItemsProps> = ({task}) => {
             <Text style={styles.taskTitle}>{task.title}</Text>
           </Animated.View>
         </PanGestureHandler>
-      </View>
+      </Animated.View>
     </GestureHandlerRootView>
   );
 };
@@ -79,7 +93,6 @@ const styles = StyleSheet.create({
   taskContainer: {
     width: '100%',
     alignItems: 'center',
-    marginVertical: 10,
   },
   task: {
     width: '90%',
