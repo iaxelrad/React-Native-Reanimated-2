@@ -1,13 +1,8 @@
 import React from 'react';
-import {Text, StyleSheet, View, StatusBar} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 const App = () => {
-  return (
-    <View style={styles.container}>
-      <Text>Pinch Gesture Handler</Text>
-      <StatusBar barStyle="dark-content" />
-    </View>
-  );
+  return <View style={styles.container}></View>;
 };
 
 const styles = StyleSheet.create({
