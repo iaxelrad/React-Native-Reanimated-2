@@ -4,7 +4,7 @@ import {StatusBar, StyleSheet, Text, View} from 'react-native';
 const App = () => {
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar barStyle="default" />
       <Text>Default App.tsx</Text>
     </View>
   );
