@@ -5,7 +5,11 @@ import Ripple from './components/Ripple';
 const App = () => {
   return (
     <View style={styles.container}>
-      <Ripple style={styles.ripple}>
+      <Ripple
+        style={styles.ripple}
+        onTap={() => {
+          console.log('tap');
+        }}>
         <Text style={styles.text}>Tap</Text>
       </Ripple>
     </View>

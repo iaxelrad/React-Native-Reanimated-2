@@ -4,7 +4,10 @@ import {
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler} from 'react-native-reanimated';
+import Animated, {
+  runOnJS,
+  useAnimatedGestureHandler,
+} from 'react-native-reanimated';
 
 interface RippleProps {
   style?: StyleProp<ViewStyle>;
@@ -16,8 +19,10 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   const tapGestureEvent =
     useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
       onStart: () => {},
-      onActive: event => {
-        console.log('onActive', event);
+      onActive: () => {
+        if (onTap) {
+          runOnJS(onTap)();
+        }
       },
       onEnd: () => {},
     });
