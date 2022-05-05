@@ -29,6 +29,8 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   const width = useSharedValue(0);
   const height = useSharedValue(0);
 
+  const rippleOpacity = useSharedValue(1);
+
   const tapGestureEvent =
     useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
       onStart: event => {
@@ -39,6 +41,7 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
         centerX.value = event.x;
         centerY.value = event.y;
 
+        rippleOpacity.value = 1;
         scale.value = 0;
         scale.value = withTiming(1, {duration: 1000});
       },
@@ -47,7 +50,9 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
           runOnJS(onTap)();
         }
       },
-      onEnd: () => {},
+      onEnd: () => {
+        rippleOpacity.value = 0;
+      },
     });
 
   const rStyle = useAnimatedStyle(() => {
@@ -60,11 +65,11 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
       width: circleRadius * 2,
       height: circleRadius * 2,
       borderRadius: circleRadius,
-      backgroundColor: 'red',
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
       position: 'absolute',
       top: 0,
       left: 0,
-      opacity: 0.2,
+      opacity: rippleOpacity.value,
       transform: [
         {translateX},
         {translateY},
@@ -76,9 +81,9 @@ const Ripple: FC<RippleProps> = ({style, onTap, children}) => {
   });
 
   return (
-    <View ref={aRef}>
+    <View ref={aRef} style={style}>
       <TapGestureHandler onGestureEvent={tapGestureEvent}>
-        <Animated.View style={style}>
+        <Animated.View style={[style, {overflow: 'hidden'}]}>
           <View>{children}</View>
           <Animated.View style={rStyle} />
         </Animated.View>
