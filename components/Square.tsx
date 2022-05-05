@@ -1,21 +1,28 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
+import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {N, SQUARE_SIZE} from '../constants';
 
 interface SquareProps {
   index: number;
+  progress: SharedValue<number>;
 }
 
-const Square: FC<SquareProps> = ({index}) => {
+const Square: FC<SquareProps> = ({index, progress}) => {
+  const offsetAngle = (2 * Math.PI) / N;
+  const finalAngle = offsetAngle * (N - 1 - index);
+
+  const rStyle = useAnimatedStyle(() => {
+    const rotate = Math.min(finalAngle, progress.value);
+
+    return {
+      transform: [{rotate: `${rotate}rad`}, {translateY: -index * SQUARE_SIZE}],
+    };
+  });
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          opacity: (index + 1) / N,
-          transform: [{translateY: -index * SQUARE_SIZE}],
-        },
-      ]}
+    <Animated.View
+      style={[styles.container, {opacity: (index + 1) / N}, rStyle]}
       key={index}
     />
   );
