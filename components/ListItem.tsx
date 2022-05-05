@@ -1,5 +1,15 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {TaskInterface} from '../App';
 
 interface ListItemsProps {
@@ -7,12 +17,31 @@ interface ListItemsProps {
 }
 
 const ListItem: FC<ListItemsProps> = ({task}) => {
+  const translateX = useSharedValue(0);
+
+  const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
+    onActive: event => {
+      translateX.value = event.translationX;
+    },
+    onEnd: () => {
+      translateX.value = withTiming(0);
+    },
+  });
+
+  const rStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: translateX.value}],
+    };
+  });
+
   return (
-    <View style={styles.taskContainer}>
-      <View style={styles.task}>
-        <Text style={styles.taskTitle}>{task.title}</Text>
-      </View>
-    </View>
+    <PanGestureHandler onGestureEvent={panGesture}>
+      <Animated.View style={[styles.taskContainer, rStyle]}>
+        <View style={styles.task}>
+          <Text style={styles.taskTitle}>{task.title}</Text>
+        </View>
+      </Animated.View>
+    </PanGestureHandler>
   );
 };
 
