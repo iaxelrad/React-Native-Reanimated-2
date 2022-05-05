@@ -24,7 +24,7 @@ const App = () => {
   const [tasks, setTasks] = useState(TASKS);
 
   const onDismiss = useCallback((task: TaskInterface) => {
-    setTasks(tasks.filter(item => item.index !== task.index));
+    setTasks(tasks => tasks.filter(item => item.index !== task.index));
   }, []);
 
   const scrollRef = useRef<ScrollView>(null);
