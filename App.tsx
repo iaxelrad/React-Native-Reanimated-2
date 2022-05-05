@@ -5,6 +5,8 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  Extrapolate,
+  interpolate,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -41,10 +43,22 @@ const App = () => {
   });
 
   const rStyle = useAnimatedStyle(() => {
+    const rotate = interpolate(
+      translateX.value,
+      [0, SCREEN_WIDTH / 2],
+      [0, 3],
+      Extrapolate.CLAMP,
+    );
+
     return {
-      transform: [{translateX: translateX.value}],
+      transform: [
+        {perspective: 100},
+        {translateX: translateX.value},
+        {rotateY: `-${rotate}deg`},
+      ],
     };
   });
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
