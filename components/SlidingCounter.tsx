@@ -112,9 +112,18 @@ const SlidingCounter = () => {
     return {opacity};
   }, []);
 
+  const rButtonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {translateX: translateX.value * 0.1},
+        {translateY: translateY.value * 0.1},
+      ],
+    };
+  }, []);
+
   return (
     <GestureHandlerRootView>
-      <View style={styles.button}>
+      <Animated.View style={[styles.button, rButtonStyle]}>
         <Animated.View style={rPlusMinusIconStyle}>
           <Icon name="minus" size={ICON_SIZE} color="#ffffff" />
         </Animated.View>
@@ -131,7 +140,7 @@ const SlidingCounter = () => {
             </Animated.View>
           </PanGestureHandler>
         </View>
-      </View>
+      </Animated.View>
     </GestureHandlerRootView>
   );
 };
