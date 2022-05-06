@@ -1,11 +1,21 @@
 import React from 'react';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StatusBar, StyleSheet, View} from 'react-native';
+import Page from './components/Page';
+import {BACKGROUND_COLOR, PAGES} from './constants';
 
 const App = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="default" />
-      <Text>Default App.tsx</Text>
+      <ScrollView
+        style={styles.scrollView}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}>
+        {PAGES.map((page, index) => (
+          <Page key={index.toString()} page={page} />
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -13,10 +23,9 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: BACKGROUND_COLOR,
   },
+  scrollView: {flex: 1},
 });
 
 export default App;
