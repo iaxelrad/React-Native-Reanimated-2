@@ -2,6 +2,8 @@ import React, {useEffect} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
+  Extrapolate,
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -28,8 +30,15 @@ const BottomSheet = () => {
   }, []);
 
   const rBottomSheetStyle = useAnimatedStyle(() => {
+    const borderRadius = interpolate(
+      translateY.value,
+      [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
+      [25, 5],
+      Extrapolate.CLAMP,
+    );
     return {
       transform: [{translateY: translateY.value}],
+      borderRadius,
     };
   });
   return (
@@ -50,7 +59,6 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     top: SCREEN_HEIGHT,
-    borderRadius: 25,
   },
   line: {
     width: 74,
