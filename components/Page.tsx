@@ -1,21 +1,47 @@
 import React, {FC} from 'react';
 import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 import {PageInterface} from '../constants';
 
 interface PageProps {
   page: PageInterface;
   translateX: Animated.SharedValue<number>;
+  index: number;
 }
 
 const {width: PAGE_WIDTH, height: PAGE_HEIGHT} = Dimensions.get('window');
 
-const Page: FC<PageProps> = ({page, translateX}) => {
+const Page: FC<PageProps> = ({page, translateX, index}) => {
+  const rCircleStyle = useAnimatedStyle(() => {
+    const inputRange = [
+      (index - 1) * PAGE_WIDTH,
+      index * PAGE_WIDTH,
+      (index + 1) * PAGE_WIDTH,
+    ];
+    const scale = interpolate(
+      translateX.value,
+      inputRange,
+      [0, 1, 0],
+      Extrapolate.CLAMP,
+    );
+    return {
+      transform: [{scale}],
+    };
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.circleContainer}>
-        <View style={styles.circle} />
-        <Image source={page.source} style={styles.image} resizeMode="contain" />
+        <Animated.View style={[styles.circle, rCircleStyle]} />
+        <Animated.Image
+          source={page.source}
+          style={styles.image}
+          resizeMode="contain"
+        />
       </View>
       <Text style={styles.title}>{page.title}</Text>
       <Text style={styles.description}>{page.description}</Text>

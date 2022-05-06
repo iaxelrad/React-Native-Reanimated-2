@@ -27,7 +27,12 @@ const App = () => {
         scrollEventThrottle={16} //to achieve 60fps -> 1/60 = 0.0166 = 16ms
       >
         {PAGES.map((page, index) => (
-          <Page key={index.toString()} page={page} translateX={translateX} />
+          <Page
+            key={index.toString()}
+            page={page}
+            translateX={translateX}
+            index={index}
+          />
         ))}
       </Animated.ScrollView>
     </View>
