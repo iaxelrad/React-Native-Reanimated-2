@@ -1,6 +1,7 @@
-import React from 'react';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import Animated, {
+  useAnimatedRef,
   useAnimatedScrollHandler,
   useDerivedValue,
   useSharedValue,
@@ -22,10 +23,20 @@ const App = () => {
     return Math.round(translateX.value / PAGE_WIDTH);
   });
 
+  const scrollRef = useAnimatedRef<ScrollView>();
+
+  const onIconPress = useCallback(() => {
+    if (activeIndex.value === PAGES.length - 1) {
+      return;
+    }
+    scrollRef?.current?.scrollTo({x: PAGE_WIDTH * (activeIndex.value + 1)});
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="default" />
       <Animated.ScrollView
+        ref={scrollRef as any}
         style={styles.scrollView}
         horizontal
         pagingEnabled
@@ -61,7 +72,12 @@ const App = () => {
         </View>
         {/* Icon Container */}
         <View style={styles.fillCenter}>
-          <Icon name="arrowright" size={24} color="black" />
+          <Icon
+            name="arrowright"
+            size={24}
+            color="black"
+            onPress={onIconPress}
+          />
         </View>
       </View>
     </View>
