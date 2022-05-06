@@ -24,14 +24,39 @@ const App = () => {
       translateY.value = event.translationY + context.value.y;
     });
 
-  const {followX, followY, rStyle} = useFollowAnimatedPosition({
+  const {
+    followX: blueFollowX,
+    followY: blueFollowY,
+    rStyle: rBlueCircleStyle,
+  } = useFollowAnimatedPosition({
     x: translateX,
     y: translateY,
   });
+
+  const {
+    followX: redFollowX,
+    followY: redFollowY,
+    rStyle: rRedCircleStyle,
+  } = useFollowAnimatedPosition({
+    x: blueFollowX,
+    y: blueFollowY,
+  });
+
+  const {rStyle: rGreenCircleStyle} = useFollowAnimatedPosition({
+    x: redFollowX,
+    y: redFollowY,
+  });
+
   return (
     <View style={styles.container}>
+      <Animated.View
+        style={[styles.circle, styles.greenCircle, rGreenCircleStyle]}
+      />
+      <Animated.View
+        style={[styles.circle, styles.redCircle, rRedCircleStyle]}
+      />
       <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.circle, rStyle]} />
+        <Animated.View style={[styles.circle, rBlueCircleStyle]} />
       </GestureDetector>
     </View>
   );
@@ -50,7 +75,10 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: 'blue',
     opacity: 0.8,
+    position: 'absolute',
   },
+  redCircle: {backgroundColor: 'red'},
+  greenCircle: {backgroundColor: 'green'},
 });
 
 export default App;
