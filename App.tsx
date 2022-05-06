@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -15,7 +15,16 @@ interface Item {
 }
 
 const App = () => {
-  const [items, setItems] = useState<Item[]>([]);
+  const initialMode = useRef<boolean>(true);
+
+  useEffect(() => {
+    initialMode.current = false;
+  }, []);
+
+  // new Array(5).fill(0).map((_, i) => ({id: i}));
+  const [items, setItems] = useState<Item[]>(
+    new Array(5).fill(0).map((_, i) => ({id: i})),
+  );
 
   const onAdd = useCallback(() => {
     setItems(currentItems => {
@@ -38,10 +47,12 @@ const App = () => {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}>
-        {items.map(item => {
+        {items.map((item, index) => {
           return (
             <Animated.View
-              entering={FadeIn}
+              entering={
+                initialMode.current ? FadeIn.delay(100 * index) : FadeIn
+              }
               exiting={FadeOut}
               layout={Layout.delay(100)}
               style={styles.listItem}
