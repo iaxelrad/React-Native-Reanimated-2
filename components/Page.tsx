@@ -71,6 +71,8 @@ const Page: FC<PageProps> = ({page, translateX, index}) => {
 
 export default Page;
 
+export {PAGE_WIDTH};
+
 const CIRCLE_WIDTH = PAGE_WIDTH * 0.7;
 
 const styles = StyleSheet.create({

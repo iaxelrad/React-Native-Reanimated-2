@@ -2,11 +2,13 @@ import React from 'react';
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import Animated, {
   useAnimatedScrollHandler,
+  useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
-import Page from './components/Page';
+import Page, {PAGE_WIDTH} from './components/Page';
 import {BACKGROUND_COLOR, PAGES} from './constants';
 import Icon from 'react-native-vector-icons/AntDesign';
+import Dot from './components/Dot';
 
 const App = () => {
   const translateX = useSharedValue(0);
@@ -14,6 +16,10 @@ const App = () => {
     onScroll: event => {
       translateX.value = event.contentOffset.x;
     },
+  });
+
+  const activeIndex = useDerivedValue(() => {
+    return Math.round(translateX.value / PAGE_WIDTH);
   });
 
   return (
@@ -38,9 +44,15 @@ const App = () => {
       </Animated.ScrollView>
       <View style={styles.footer}>
         {/* Paginator */}
-        <View style={styles.fillCenter}>
-          {PAGES.map((page, index) => {
-            return <View style={styles.dot} />;
+        <View style={[styles.fillCenter, {flexDirection: 'row'}]}>
+          {PAGES.map((_, index) => {
+            return (
+              <Dot
+                key={index.toString()}
+                activeDotIndex={activeIndex}
+                index={index}
+              />
+            );
           })}
         </View>
         {/* Text Container */}
@@ -78,7 +90,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.7,
     fontWeight: '500',
   },
-  dot: {},
 });
 
 export default App;
