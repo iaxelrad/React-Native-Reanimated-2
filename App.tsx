@@ -1,13 +1,11 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, {useSharedValue} from 'react-native-reanimated';
 import {useFollowAnimatedPosition} from './useFollowAnimatedPosition';
+
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
+const SIZE = 80;
 
 const App = () => {
   const translateX = useSharedValue(0);
@@ -22,6 +20,13 @@ const App = () => {
     .onUpdate(event => {
       translateX.value = event.translationX + context.value.x;
       translateY.value = event.translationY + context.value.y;
+    })
+    .onEnd(() => {
+      if (translateX.value > SCREEN_WIDTH / 2) {
+        translateX.value = SCREEN_WIDTH - SIZE;
+      } else {
+        translateX.value = 0;
+      }
     });
 
   const {
@@ -66,13 +71,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   circle: {
-    height: 80,
+    height: SIZE,
     aspectRatio: 1,
-    borderRadius: 40,
+    borderRadius: SIZE / 2,
     backgroundColor: 'blue',
     opacity: 0.8,
     position: 'absolute',
