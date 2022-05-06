@@ -1,14 +1,16 @@
 import React, {FC} from 'react';
 import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import Animated from 'react-native-reanimated';
 import {PageInterface} from '../constants';
 
 interface PageProps {
   page: PageInterface;
+  translateX: Animated.SharedValue<number>;
 }
 
 const {width: PAGE_WIDTH, height: PAGE_HEIGHT} = Dimensions.get('window');
 
-const Page: FC<PageProps> = ({page}) => {
+const Page: FC<PageProps> = ({page, translateX}) => {
   return (
     <View style={styles.container}>
       <View style={styles.circleContainer}>
