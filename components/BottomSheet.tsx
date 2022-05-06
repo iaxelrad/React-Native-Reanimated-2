@@ -1,4 +1,9 @@
-import React, {forwardRef, useCallback, useImperativeHandle} from 'react';
+import React, {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useImperativeHandle,
+} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -12,14 +17,16 @@ import Animated, {
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50;
 
-export type BottomSheetProps = {};
+export type BottomSheetProps = {
+  children?: ReactNode;
+};
 export type BottomSheetRefProps = {
   scrollTo: (destination: number) => void;
   isActive: () => boolean;
 };
 
 const BottomSheet = forwardRef<BottomSheetRefProps, BottomSheetProps>(
-  ({}, ref) => {
+  ({children}, ref) => {
     const translateY = useSharedValue(0);
     const active = useSharedValue(false);
 
@@ -77,6 +84,7 @@ const BottomSheet = forwardRef<BottomSheetRefProps, BottomSheetProps>(
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.container, rBottomSheetStyle]}>
           <View style={styles.line} />
+          {children}
         </Animated.View>
       </GestureDetector>
     );
