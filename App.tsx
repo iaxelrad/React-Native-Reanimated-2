@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import {useFollowAnimatedPosition} from './useFollowAnimatedPosition';
 
 const App = () => {
   const translateX = useSharedValue(0);
@@ -23,19 +24,10 @@ const App = () => {
       translateY.value = event.translationY + context.value.y;
     });
 
-  const followX = useDerivedValue(() => {
-    return withSpring(translateX.value);
+  const {followX, followY, rStyle} = useFollowAnimatedPosition({
+    x: translateX,
+    y: translateY,
   });
-
-  const followY = useDerivedValue(() => {
-    return withSpring(translateY.value);
-  });
-
-  const rStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{translateX: followX.value}, {translateY: followY.value}],
-    };
-  }, []);
   return (
     <View style={styles.container}>
       <GestureDetector gesture={gesture}>
