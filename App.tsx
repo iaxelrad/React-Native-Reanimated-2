@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {FadeIn} from 'react-native-reanimated';
 
 const LIST_ITEM_COLOR = '#1798DE';
 
@@ -32,7 +33,13 @@ const App = () => {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}>
         {items.map(item => {
-          return <View style={styles.listItem} key={item.id} />;
+          return (
+            <Animated.View
+              entering={FadeIn}
+              style={styles.listItem}
+              key={item.id}
+            />
+          );
         })}
       </ScrollView>
     </View>
