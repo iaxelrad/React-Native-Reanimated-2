@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {FadeIn} from 'react-native-reanimated';
+import Animated, {FadeIn, FadeOut, Layout} from 'react-native-reanimated';
 
 const LIST_ITEM_COLOR = '#1798DE';
 
@@ -24,6 +24,12 @@ const App = () => {
     });
   }, []);
 
+  const onDelete = useCallback((itemId: number) => {
+    setItems(currentItems => {
+      return currentItems.filter(item => item.id !== itemId);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.floatingButton} onPress={onAdd}>
@@ -36,8 +42,11 @@ const App = () => {
           return (
             <Animated.View
               entering={FadeIn}
+              exiting={FadeOut}
+              layout={Layout.delay(100)}
               style={styles.listItem}
               key={item.id}
+              onTouchEnd={() => onDelete(item.id)}
             />
           );
         })}
